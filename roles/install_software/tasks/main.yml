@@ -32,6 +32,7 @@
     state: present
   tags:
     - docker
+
 - name: Verify that we have the key with the fingerprint
   remote_user: wooolf
   apt_key:
