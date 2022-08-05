@@ -24,6 +24,7 @@
     - software-properties-common
   tags:
     - docker
+
 - name: Add Docker s official GPG key
   remote_user: wooolf
   apt_key:
@@ -38,6 +39,7 @@
     state: present
   tags:
     - docker
+
 - name: Set up the stable repository
   remote_user: wooolf
   apt_repository:
@@ -46,12 +48,14 @@
     update_cache: yes
   tags:
     - docker
+
 - name: Update apt packages
   remote_user: wooolf
   apt:
     update_cache: yes
   tags:
     - docker
+
 - name: Install docker
   remote_user: wooolf
   apt:
@@ -61,6 +65,7 @@
   #notify: Start docker on boot
   tags:
     - docker
+
 - name: Add remote "wooolf" user to "docker" group
   remote_user: wooolf
   user:
@@ -69,6 +74,7 @@
     append: yes
   tags:
     - docker
+
 - name: Install docker-compose
   remote_user: wooolf
   get_url:
