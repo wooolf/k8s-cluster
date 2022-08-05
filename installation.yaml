@@ -23,3 +23,10 @@
       when: "'master' in inventory_hostname"
       tags:
         - certs
+
+    - name: Generate auth config for master and workers
+      include_role:
+        name: prepare_k8s_auth_config
+      when: "'master' in inventory_hostname"
+      tags:
+        - config

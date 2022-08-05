@@ -3,10 +3,9 @@
 for i in 1 2 3; do
 
   internal_ip=$(nslookup k8s_n${i}.local.pl | grep Address | grep -v "#" | cut -d' ' -f2)
-  scp -i ~/.ssh/k8s_nodes.rsa orker-${i}-key.pem kube-proxy.kubeconfig wooolf@${internal_ip}:~/
+  scp -i ~/.ssh/k8s_nodes.rsa worker-${i}-key.pem kube-proxy.kubeconfig wooolf@${internal_ip}:~/
 
 done
-
 
 # for instance in controller-0 controller-1 controller-2; do
 #   external_ip=$(aws ec2 describe-instances --filters \

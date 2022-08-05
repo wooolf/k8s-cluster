@@ -1,2 +1,22 @@
 ---
 # tasks file for prepare_k8s_auth_config
+
+- name: Generate config
+  block:
+    - name: Transfer scripts
+      copy: src=./ dest=/home/{{ ansible_user }}/certs mode=0777
+      register: transfer_scripts
+
+    - name: Install CFSSL - execute the script
+      command: /bin/bash /home/{{ ansible_user }}/certs/{{ item }}
+      args:
+        chdir: /home/{{ ansible_user }}/certs
+      with_items:
+        - kube_config.sh
+        - kube_proxy.sh
+        - kube_controller.sh
+        - kube_scheduler.sh
+        - kube_admin.sh
+        - copy_config.sh
+  tags:
+    - config
