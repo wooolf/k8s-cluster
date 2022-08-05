@@ -37,3 +37,10 @@
       when: "'master' in inventory_hostname"
       tags:
         - encryption
+
+    - name: Deploy etcd in master
+      include_role:
+        name: prepare_k8s_etcd
+      when: "'master' in inventory_hostname"
+      tags:
+        - etcd
