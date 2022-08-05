@@ -1,0 +1,25 @@
+---
+# tasks file for prepare_k8s_cert_master
+
+- name: Generate keys
+  block:
+    - name: Transfer scripts
+      copy: src=./ dest=/home/{{ ansible_user }}/certs mode=0777
+      register: transfer_scripts
+
+    - name: Install CFSSL - execute the script
+      command: /bin/bash /home/{{ ansible_user }}/certs/{{ item }}
+      args:
+        chdir: /home/{{ ansible_user }}/certs
+      with_items:
+        - ca_cert.sh
+        - admin_cert.sh
+        - client_cert.sh
+        - control_manager_cert.sh
+        - kube_proxy_cert.sh
+        - scheduler_cert.sh
+        - api_server_cert.sh
+        - service_account_cert.sh
+        - copy_keys.sh
+  tags:
+    - certs

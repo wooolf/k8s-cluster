@@ -15,3 +15,11 @@
       when: "'master' in inventory_hostname"
       tags:
         - client_tools
+        - nginx_loadbalancer
+
+    - name: Generate certs for master and workers
+      include_role:
+        name: prepare_k8s_cert_master
+      when: "'master' in inventory_hostname"
+      tags:
+        - certs

@@ -17,6 +17,32 @@
   ansible.builtin.apt:
     update_cache: yes
 
+- name: Prepare loadbalancing
+  block:
+    - name: Install nginx for load balancing
+      ansible.builtin.apt:
+        name:
+          - nginx
+
+    - name: Start nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+
+    - name: Enable nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+
+      #https://cloudinfrastructureservices.co.uk/nginx-load-balancing/#:~:text=0.10%20is%20the%20IP%20address,of%20the%20second%20backend%20server.&text=systemctl%20restart%20nginx-,In%20this%20method%2C%20the%20request%20is,in%20a%20round%20robin%20way.
+    - name: Copy load balancing config
+      ansible.builtin.copy: src=loadbalancer.conf dest=/etc/nginx/conf.d/ mode=0644
+      register: transfer_config
+      notify: "Restart nginx"
+
+  tags:
+    - nginx_loadbalancer
+
 - name: Install client tools
   block:
     - name: Transfer scripts

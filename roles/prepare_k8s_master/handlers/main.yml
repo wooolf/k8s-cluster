@@ -8,3 +8,9 @@
 - name: Install kubectl - execute the script
   command: sh /home/{{ ansible_user }}/install_kubectl.sh
   listen: "Execute the tools scripts"
+
+- name: Restart nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+  listen: "Restart nginx"
