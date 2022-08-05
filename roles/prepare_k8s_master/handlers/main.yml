@@ -3,3 +3,8 @@
 
 - name: Install CFSSL - execute the script
   command: sh /home/{{ ansible_user }}/install_cfssl.sh
+  listen: "Execute the tools scripts"
+
+- name: Install kubectl - execute the script
+  command: sh /home/{{ ansible_user }}/install_kubectl.sh
+  listen: "Execute the tools scripts"

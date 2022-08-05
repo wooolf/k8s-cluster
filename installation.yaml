@@ -13,3 +13,5 @@
       include_role:
         name: prepare_k8s_master
       when: "'master' in inventory_hostname"
+      tags:
+        - client_tools
