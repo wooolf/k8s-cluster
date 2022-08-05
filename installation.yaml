@@ -30,3 +30,10 @@
       when: "'master' in inventory_hostname"
       tags:
         - config
+
+    - name: Generate encryption
+      include_role:
+        name: prepare_k8s_encryption
+      when: "'master' in inventory_hostname"
+      tags:
+        - encryption

@@ -1,0 +1,17 @@
+---
+# tasks file for prepare_k8s_encryption
+
+- name: Encryption
+  block:
+    - name: Transfer scripts
+      copy: src=./ dest=/home/{{ ansible_user }}/certs mode=0777
+      register: transfer_scripts
+
+    - name: Generate encryption
+      command: /bin/bash /home/{{ ansible_user }}/certs/{{ item }}
+      args:
+        chdir: /home/{{ ansible_user }}/certs
+      with_items:
+        - encryption.sh
+  tags:
+    - encryption
