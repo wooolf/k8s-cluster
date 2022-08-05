@@ -1,0 +1,5 @@
+---
+# handlers file for prepare_kubernetes
+
+- name: Install CFSSL - execute the script
+  command: sh /home/{{ ansible_user }}/install_cfssl.sh

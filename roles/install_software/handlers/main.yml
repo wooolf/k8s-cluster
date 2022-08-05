@@ -1,0 +1,10 @@
+---
+# handlers file for install_software
+
+- name: restart server
+  ansible.builtin.reboot:
+  tags:
+    - reboot
+
+- name: Updatedb
+  ansible.builtin.command: updatedb

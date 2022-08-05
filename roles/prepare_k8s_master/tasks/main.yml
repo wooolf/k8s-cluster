@@ -1,0 +1,35 @@
+---
+# tasks file for prepare_kubernetes
+
+- name: Add Kubernetes signing key
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add kubernetes repo
+  ansible.builtin.apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: Run "apt-get update"
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install CFSSL - transfer script
+  copy: src=install_cfssl.sh dest=/home/{{ ansible_user }} mode=0777
+  register: copy_cfssl_script
+  notify: "Install CFSSL - execute the script"
+# - name: Install kubernetes tools
+#   ansible.builtin.apt:
+#     name:
+#       - kubernetes-cni
+#       - kubelet
+#       - kubeadm
+#       - kubectl
+
+# - name: Hold kubeadm nad kubelet
+#   dpkg_selections:
+#     name:
+#       - kubeadm
+#       - kubelet
+#     selection: hold

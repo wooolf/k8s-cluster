@@ -1,0 +1,89 @@
+---
+# tasks file for install_software
+
+- name: install a list of packages
+  ansible.builtin.apt:
+    pkg:
+      - mlocate
+      - vim
+      - htop
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install docker packages
+  remote_user: ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+  tags:
+    - docker
+- name: Add Docker s official GPG key
+  remote_user: wooolf
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+    - docker
+- name: Verify that we have the key with the fingerprint
+  remote_user: wooolf
+  apt_key:
+    id: 0EBFCD88
+    state: present
+  tags:
+    - docker
+- name: Set up the stable repository
+  remote_user: wooolf
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+    state: present
+    update_cache: yes
+  tags:
+    - docker
+- name: Update apt packages
+  remote_user: wooolf
+  apt:
+    update_cache: yes
+  tags:
+    - docker
+- name: Install docker
+  remote_user: wooolf
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  #notify: Start docker on boot
+  tags:
+    - docker
+- name: Add remote "wooolf" user to "docker" group
+  remote_user: wooolf
+  user:
+    name: "wooolf"
+    group: "docker"
+    append: yes
+  tags:
+    - docker
+- name: Install docker-compose
+  remote_user: wooolf
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: "u+x,g+x"
+
+- name: Disable swap permanently, persist reboots
+  replace:
+    path: /etc/fstab
+    regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
+    replace: '#\1\2\3swap\4'
+    backup: yes
+  tags:
+    - swap_off
+  notify:
+    - restart server
+    - Updatedb
