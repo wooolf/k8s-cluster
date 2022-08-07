@@ -2,6 +2,8 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y gcc python-dev libkrb5-dev && \
+    apt install software-properties-common && \
+    apt update && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt install python3.9 && \
     python3.9 --version && \
