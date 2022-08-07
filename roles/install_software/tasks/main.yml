@@ -12,7 +12,7 @@
     cache_valid_time: 3600
 
 - name: Install docker packages
-  remote_user: ubuntu
+  remote_user: wooolf
   apt:
     name: "{{ item }}"
     state: present
@@ -24,6 +24,29 @@
     - software-properties-common
   tags:
     - docker
+
+- name: Install python3.9
+  block:
+    - name: Add repo
+      ansible.builtin.apt_repository:
+        repo: ppa:deadsnakes/ppa
+        state: present
+
+    - name: Install prerequisites, python and pip
+      remote_user: wooolf
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - software-properties-common
+        - python3.9
+        - python3.9-distutils
+        - python3-pip
+
+  when: "'master' in inventory_hostname"
+  tags:
+    - python
 
 - name: Add Docker s official GPG key
   remote_user: wooolf

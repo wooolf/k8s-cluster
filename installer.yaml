@@ -8,6 +8,8 @@
     - name: Install prerquisists
       include_role:
         name: install_software
+      tags:
+        - python
 
     - name: Prepare master node
       include_role:
@@ -44,3 +46,10 @@
       when: "'master' in inventory_hostname"
       tags:
         - etcd
+
+    - name: Install control plane
+      include_role:
+        name: prepare_k8s_control_plane
+      when: "'master' in inventory_hostname"
+      tags:
+        - install_controlplane

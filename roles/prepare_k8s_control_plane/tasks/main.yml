@@ -1,0 +1,75 @@
+---
+# tasks file for prepare_k8s_control_plane
+
+- name: Install kubernetes
+  block:
+    - name: Create Kubernetes config
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: 0644
+        state: directory
+      loop:
+        - /var/lib/kubernetes/
+        - /etc/kubernetes/config
+
+    - name: Download kubernetes controller binaries
+      ansible.builtin.get_url:
+        url: "{{ item }}"
+        dest: /usr/local/bin/
+        mode: "0777"
+      loop:
+        - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-apiserver"
+        - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-controller-manager"
+        - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler"
+        - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
+
+    - name: Copy keys and config
+      ansible.builtin.copy:
+        src: "/home/{{ ansible_user }}/certs/{{ item }}"
+        dest: /var/lib/kubernetes/
+        mode: 0644
+        remote_src: true
+      loop:
+        - ca.pem
+        - ca-key.pem
+        - kubernetes-key.pem
+        - kubernetes.pem
+        - service-account-key.pem
+        - service-account.pem
+        - encryption-config.yaml
+        - kube-controller-manager.kubeconfig
+        - kube-scheduler.kubeconfig
+
+    - name: Copy scripts
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /home/{{ ansible_user }}/
+        mode: 0777
+      loop:
+        - api_server.sh
+        - control_manager.sh
+        - scheduler.sh
+
+    - name: Install controlplane
+      command: "/bin/bash /home/{{ ansible_user }}/{{ item }}"
+      args:
+        chdir: "/home/{{ ansible_user }}"
+      with_items:
+        - api_server.sh
+        - control_manager.sh
+        - scheduler.sh
+      register: kube_result
+      changed_when: "kube_result.rc != 2"
+
+    - name: Setup controle plane services
+      ansible.builtin.systemd:
+        state: started
+        daemon_reload: yes
+        name: "{{ item }}"
+      loop:
+        - kube-apiserver
+        - kube-controller-manager
+        - kube-scheduler
+
+  tags:
+    - install_controlplane
