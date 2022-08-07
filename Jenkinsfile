@@ -1,7 +1,7 @@
 pipeline {
     agent { docker { 
         image 'cytopia/ansible:latest-tools'
-        args '-e USER=ansible --name jenkins_ansible'
+        args '-e USER=ansible'
         } }
     stages {
         stage('build') {
