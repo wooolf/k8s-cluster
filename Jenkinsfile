@@ -1,12 +1,10 @@
 pipeline {
-    agent { docker { 
-        image 'willhallonline/ansible'
-        } }
+    agent { dockerfile true }
     stages {
         stage('build') {
             steps {
-                // sh 'ansible --version'
-                sh 'sleep 100000s'
+                sh 'ansible --version'
+                // sh 'sleep 100000s'
             }
         }
     }
