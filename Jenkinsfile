@@ -4,7 +4,7 @@ pipeline {
         stage('build') {
             steps {
                 // sh 'ansible --version'
-                sh 'whereis ansible'
+                sh 'sleep 100000'
             }
         }
     }
